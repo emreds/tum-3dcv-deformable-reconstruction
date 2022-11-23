@@ -9,9 +9,7 @@ DATASET_ROOT = r"C:\Users\J-Dau\Projekte\Datasets\tum_deformable-3d-reconstructi
 class DatasetModel(Enum):
     DUCK = "Duck"
     SNOOPY = "Snoopy"
-
-
-MODEL = DatasetModel.DUCK.value
+    CUSTOM = "Custom"
 
 
 def ORB_matching(imgs, nFeatures=100, masked_imgs=None):
@@ -78,10 +76,11 @@ def FLANN_matching(imgs, nFeatures=100, masked_imgs=None, detector="ORB"):
 
 
 def main():
-    first_index = 170
-    second_index = 200
-    nFeatures = 50
-
+    first_index = 1
+    second_index = 4
+    nFeatures = 25
+    
+    MODEL = DatasetModel.CUSTOM.value
     dataset_path = path.join(DATASET_ROOT, MODEL)
 
     img1 = cv2.imread(path.join(dataset_path, 'color_{:06d}.png'.format(first_index)))
@@ -94,9 +93,10 @@ def main():
     masked_img2 = cv2.bitwise_and(img2, mask2)
 
     # match_img = ORB_matching((img1, img2), nFeatures, masked_imgs=(masked_img1, masked_img2))
-    match_img = FLANN_matching((img1, img2), nFeatures, masked_imgs=(masked_img1, masked_img2), detector="")
+    match_img = FLANN_matching((img1, img2), nFeatures, masked_imgs=(masked_img1, masked_img2), detector="SIFT")
+    # match_img = ORB_matching((img1, img2), nFeatures)
 
-
+  
     cv2.imshow("", match_img)
     cv2.waitKey()
 
