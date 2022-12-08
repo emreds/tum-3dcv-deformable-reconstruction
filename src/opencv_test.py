@@ -3,7 +3,7 @@ from enum import Enum
 
 from os import path
 
-DATASET_ROOT = r"C:\Users\J-Dau\Projekte\Datasets\tum_deformable-3d-reconstruction"
+DATASET_ROOT = r"../dataset/"
 
 
 class DatasetModel(Enum):
