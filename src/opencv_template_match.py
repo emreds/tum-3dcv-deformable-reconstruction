@@ -8,36 +8,36 @@ template = cv.imread('../dataset/coke/template_3.png')
 w, h = template.shape[:2][::-1]
 
 
-templateR, templateG, templateB = cv.split(template)
+templateB, templateG, templateR = cv.split(template)
 # All the 6 methods for comparison in a list
 methods = ['cv.TM_CCOEFF', 'cv.TM_CCOEFF_NORMED', 'cv.TM_CCORR',
             'cv.TM_CCORR_NORMED', 'cv.TM_SQDIFF', 'cv.TM_SQDIFF_NORMED']
 for meth in methods:
     img = img2.copy()
-    imageMainR, imageMainG, imageMainB = cv.split(img)
+    imageMainB, imageMainG, imageMainR = cv.split(img)
     method = eval(meth)
     # Apply template Matching
     #res = cv.matchTemplate(img,template,method)
-    resultB = cv.matchTemplate(imageMainR, templateR, method)
+    resultB = cv.matchTemplate(imageMainB, templateB, method)
     resultG = cv.matchTemplate(imageMainG, templateG, method)
-    resultR = cv.matchTemplate(imageMainB, templateB, method)
-    res = resultR + resultG + resultB
+    resultR = cv.matchTemplate(imageMainR, templateR, method)
+    res = resultB + resultG + resultR
     min_valr, max_valr, min_locr, max_locr = cv.minMaxLoc(resultR)
     min_valg, max_valg, min_locg, max_locg = cv.minMaxLoc(resultG)
     min_valb, max_valb, min_locb, max_locb = cv.minMaxLoc(resultB)
     # If the method is TM_SQDIFF or TM_SQDIFF_NORMED, take minimum
     # print(min_locr + min_locg)
     top_left = [0,0]
-    print(f'min_locr: {min_locr}')
+    #print(f'min_locr: {min_locr}')
     if method in [cv.TM_SQDIFF, cv.TM_SQDIFF_NORMED]:
         
         #top_left = min_locr + min_locg + min_locb
-        top_left[0] = min_locr[0] + min_locg[0] + min_locb[0]
-        top_left[1] = min_locr[1] + min_locg[1] + min_locb[1]
+        top_left[0] = int((min_locr[0] + min_locg[0] + min_locb[0]) / 3)
+        top_left[1] = int((min_locr[1] + min_locg[1] + min_locb[1]) / 3)
     else:
         #top_left = max_locr +  max_locg +  max_locb
-        top_left[0] = max_locr[0] + max_locg[0] + max_locb[0]
-        top_left[0] = max_locr[1] + max_locg[1] + max_locb[1]
+        top_left[0] = int((max_locr[0] + max_locg[0] + max_locb[0]) / 3)
+        top_left[1] = int((max_locr[1] + max_locg[1] + max_locb[1]) / 3)
         
         
     print(f'top left {top_left}')
@@ -45,10 +45,13 @@ for meth in methods:
     
     #print(top_left)
     #print(bottom_right)
+    #print(img.shape)
+    #print(top_left)
+    #print(bottom_right)
     cv.rectangle(img, top_left, bottom_right, (255, 255, 255), )
-    plt.subplot(121),plt.imshow(res,cmap = 'gray')
+    plt.subplot(121),plt.imshow(res,)
     plt.title('Matching Result'), plt.xticks([]), plt.yticks([])
-    plt.subplot(122),plt.imshow(img,cmap = 'gray')
+    plt.subplot(122),plt.imshow(img,)
     plt.title('Detected Point'), plt.xticks([]), plt.yticks([])
     plt.suptitle(meth)
     plt.show()
