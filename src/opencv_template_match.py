@@ -2,8 +2,10 @@ import cv2 as cv
 import numpy as np
 from matplotlib import pyplot as plt
 img = cv.imread('../dataset/coke/image.png')
+img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
 img2 = img.copy()
 template = cv.imread('../dataset/coke/template_3.png')
+template = cv.cvtColor(template, cv.COLOR_BGR2RGB)
 #print(template.shape)
 w, h = template.shape[:2][::-1]
 
@@ -14,14 +16,14 @@ methods = ['cv.TM_CCOEFF', 'cv.TM_CCOEFF_NORMED', 'cv.TM_CCORR',
             'cv.TM_CCORR_NORMED', 'cv.TM_SQDIFF', 'cv.TM_SQDIFF_NORMED']
 for meth in methods:
     img = img2.copy()
-    imageMainB, imageMainG, imageMainR = cv.split(img)
+    imageMainR, imageMainG, imageMainB = cv.split(img)
     method = eval(meth)
     # Apply template Matching
     #res = cv.matchTemplate(img,template,method)
-    resultB = cv.matchTemplate(imageMainB, templateB, method)
-    resultG = cv.matchTemplate(imageMainG, templateG, method)
     resultR = cv.matchTemplate(imageMainR, templateR, method)
-    res = resultB + resultG + resultR
+    resultG = cv.matchTemplate(imageMainG, templateG, method)
+    resultB = cv.matchTemplate(imageMainB, templateB, method)
+    res = resultR + resultG + resultB
     min_valr, max_valr, min_locr, max_locr = cv.minMaxLoc(resultR)
     min_valg, max_valg, min_locg, max_locg = cv.minMaxLoc(resultG)
     min_valb, max_valb, min_locb, max_locb = cv.minMaxLoc(resultB)
